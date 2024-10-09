@@ -1,5 +1,6 @@
 fun main() {
     val products = mutableListOf<Product>()
+    val productions = mutableMapOf<Product, MutableList<Production>>()
 
     println("Bem-vindo ao PlanTEI!")
     println("Selecione uma opção:")
@@ -29,9 +30,24 @@ fun main() {
 
                 val product = Product(name, type, culture, plantingDate, harvestDate)
                 products.add(product)
+                productions[product] = mutableListOf()
                 println("Produto cadastrado com sucesso!")
             }
-            "2" -> println("Acompanhamento de produção selecionado")
+            "2" -> {
+                println("Acompanhamento de produção")
+                println("Selecione um produto:")
+                products.forEachIndexed { index, product ->
+                    println("${index + 1}. ${product.name}")
+                }
+                val productIndex = readLine()!!.trim().toInt() - 1
+                val product = products[productIndex]
+                println("Quantidade produzida (kg): ")
+                val quantity = readLine()!!.trim().toDouble()
+
+                val production = Production(quantity)
+                productions[product]!!.add(production)
+                println("Produção registrada com sucesso!")
+            }
             "3" -> println("Controle de estoque selecionado")
             "4" -> println("Geração de relatórios selecionado")
             "5" -> {
@@ -43,6 +59,14 @@ fun main() {
 
         println("Produtos cadastrados:")
         products.forEach { println(it) }
+
+        println("Produção por produto:")
+        productions.forEach { (product, productions) ->
+            println("Produto: ${product.name}")
+            productions.forEachIndexed { index, production ->
+                println("  ${index + 1}. Quantidade: ${production.quantity} kg")
+            }
+        }
     }
 }
 
@@ -51,3 +75,5 @@ data class Product(val name: String, val type: String, val culture: String, val 
         return "Produto: $name, Tipo: $type, Cultura: $culture, Data de plantio: $plantingDate, Previsão de colheita: $harvestDate"
     }
 }
+
+data class Production(val quantity: Double)
