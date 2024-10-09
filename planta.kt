@@ -1,6 +1,7 @@
 fun main() {
     val products = mutableListOf<Product>()
     val productions = mutableMapOf<Product, MutableList<Production>>()
+    val stock = mutableMapOf<Product, Double>()
 
     println("Bem-vindo ao PlanTEI!")
     println("Selecione uma opção:")
@@ -31,6 +32,7 @@ fun main() {
                 val product = Product(name, type, culture, plantingDate, harvestDate)
                 products.add(product)
                 productions[product] = mutableListOf()
+                stock[product] = 0.0
                 println("Produto cadastrado com sucesso!")
             }
             "2" -> {
@@ -46,9 +48,27 @@ fun main() {
 
                 val production = Production(quantity)
                 productions[product]!!.add(production)
+                stock[product] = stock[product]!! + quantity
                 println("Produção registrada com sucesso!")
             }
-            "3" -> println("Controle de estoque selecionado")
+            "3" -> {
+                println("Controlar estoque")
+                println("Selecione um produto:")
+                products.forEachIndexed { index, product ->
+                    println("${index + 1}. ${product.name}")
+                }
+                val productIndex = readLine()!!.trim().toInt() - 1
+                val product = products[productIndex]
+                println("Quantidade a ser retirada do estoque (kg): ")
+                val quantity = readLine()!!.trim().toDouble()
+
+                if (stock[product]!! >= quantity) {
+                    stock[product] = stock[product]!! - quantity
+                    println("Saída de estoque registrada com sucesso!")
+                } else {
+                    println("Não há estoque suficiente para essa quantidade!")
+                }
+            }
             "4" -> println("Geração de relatórios selecionado")
             "5" -> {
                 println("Saindo do sistema...")
@@ -66,6 +86,11 @@ fun main() {
             productions.forEachIndexed { index, production ->
                 println("  ${index + 1}. Quantidade: ${production.quantity} kg")
             }
+        }
+
+        println("Estoque por produto:")
+        stock.forEach { (product, quantity) ->
+            println("Produto: ${product.name}, Estoque: $quantity kg")
         }
     }
 }
